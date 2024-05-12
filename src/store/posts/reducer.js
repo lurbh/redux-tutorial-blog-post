@@ -19,87 +19,28 @@ const postsSlice = createSlice({
         value: mockedPosts,
     },
     reducers: {
-        createPost: {
-            // To keep the reducer function "pure", non-deterministic logic such as the
-            // generation of a unique ID/getting current date time should be done as part
-            // of the payload creation.
-            //
-            // `createSlice` allows for a prepare callback to be configured so that the
-            // eventual payload that goes into the reducer action will contain the
-            // generated values.   
-            prepare: function (postDetails) {
-                const currentTimestamp = Date.now();
-                return {
-                    // Recall that all payload has to be nested inside `payload` field.
-                    payload: {
-                        ...postDetails,
-                        id: nanoid(),
-                        createdAt: currentTimestamp,
-                        updatedAt: currentTimestamp,
-                    },
-                }
-            },
-            reducer: function (state, action) {
-                // Notice that this function does nothing else but mutating the state.
-                // No external calls, no non-deterministic functions.
-                //
-                // If there were to be function calls in this reducer, they have to be
-                // pure as well.
-                //
-                // It is also alright to mutate the `state` directly because redux-toolkit
-                // makes use of the Immer package, which does the state immutability magic
-                // for us.
-                state.value.push(action.payload);
-            },
+        /** @param {{type: string, payload: Post} action} */
+        createPost: function (state, action) {
+            // TODO: Add the new post into the state
         },
 
-        editPost: {
-            prepare: function (postDetails) {
-                const currentTimestamp = Date.now();
-                return {
-                    payload: {
-                        ...postDetails,
-                        updatedAt: currentTimestamp,
-                    },
-                }
-            },
-            reducer: function(state, action) {
-                const { id, content, title, updatedAt } = action.payload;
-            
-                const postToBeEdited = state.value.find(post => post.id === id);
-                if (!postToBeEdited) {
-                    // We could not find the post based on id. We probably can set an
-                    // error state here to alert the frontend.
-                    console.error("Could not find post by id", id);
-                    return;
-                }
-    
-                // Because objects are "references", we can update its attributes in-place.
-                postToBeEdited.content = content;
-                postToBeEdited.title = title;
-                postToBeEdited.updatedAt = updatedAt;
-            },
+        /** @param {{type: string, payload: Post} action} */
+        editPost: function (state, action) {
+            // TODO: Find the post by id, then update its contents
         },
 
         deletePost: function (state, action) {
-            const { id } = action.payload;
-            
-            const indexToBeDeleted = state.value.findIndex(post => post.id === id);
-            if (indexToBeDeleted < 0) {
-                // We could not find the post based on id. We probably can set an
-                // error state here to alert the frontend.
-                console.error("Could not find post by id for deletion", id);
-                return;
-            }
-
-            // Array.splice removes elements in-place
-            state.value.splice(indexToBeDeleted, 1);
+           // TODO: Find the post by id, then delete it from state
         }
     }
 });
 
 export const selectAllPosts = () => (state) => state.posts.value;
-export const selectPostById = (id) => (state) => state.posts.value.find(post => post.id === id);
+
+export const selectPostById = (id) => (state) => {
+    // TODO: Complete this - to find a post by its ID
+    // Recall that `state` refers to the root state
+}
 
 // These will be used by downstream modules when dispatching actions to the store
 export const { createPost, editPost, deletePost } = postsSlice.actions;
