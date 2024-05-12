@@ -1,0 +1,25 @@
+.post-card:hover {
+    background-color: #dfdfdf;
+}
+
+.post-header {
+    font-weight: bolder;
+}
+
+.post-body {
+    white-space: pre-line;
+    font-size: 14px;
+}
+
+.post-footer {
+    display: flex;
+}
+
+.post-timestamps {
+    font-size: 10px;
+    color: #777;
+}
+
+.post-footer-spacer {
+    flex-grow: 1;
+}
