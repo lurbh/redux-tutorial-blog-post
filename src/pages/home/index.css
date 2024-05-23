@@ -1,3 +1,7 @@
+.post-card-pinned {
+    border: 2px solid red;
+}
+
 .post-card:hover {
     background-color: #dfdfdf;
 }

@@ -8,6 +8,7 @@ export const mockedPosts = [
         updatedAt: moment("2024-05-01T08:00:00Z").valueOf(),
         title: "First",
         content: "Hello World! This is my first post of the blog!",
+        pinned: false
     },
     {
         id: nanoid(),
@@ -15,6 +16,7 @@ export const mockedPosts = [
         updatedAt: moment("2024-05-02T08:00:00Z").valueOf(),
         title: "New Lines are amazing",
         content: "Here's my second post.\n\nTesting out the new lines lmao.",
+        pinned: true
     },
     {
         id: nanoid(),
@@ -22,5 +24,6 @@ export const mockedPosts = [
         updatedAt: moment("2024-05-03T08:00:00Z").valueOf(),
         title: "Slay",
         content: "This blog totally ate and left no crumbs.",
+        pinned: false
     },
 ];

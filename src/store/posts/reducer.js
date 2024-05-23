@@ -8,6 +8,7 @@ import { mockedPosts } from './mocks';
  * @property {string} content - the body of the post
  * @property {number} createdAt - timestamp in milliseconds of the creation of the post
  * @property {number} updatedAt - timestamp in milliseconds of the last update of the post
+ * @property {boolean} pinned - pinvalue
  */
 
 const postsSlice = createSlice({
@@ -72,11 +73,35 @@ const postsSlice = createSlice({
                 throw new Error("Cannot Find post for ID " + action.payload.id);
             }
             state.value.splice(index,1)
+        },
+
+        pinPost : function (state, action) {
+            const post = state.value.find((p) => p.id === action.payload.id)
+            if(!post)
+            {
+                throw new Error("Cannot Find post for ID " + action.payload.id);
+            }
+            post.pinned = !post.pinned;
         }
     }
 });
 
-export const selectAllPosts = () => (state) => state.posts.value;
+export const selectAllPosts = (sorted=false) => (state) => {
+    if(sorted)
+    {
+        const posts = [...state.posts.value]
+        posts.sort((p1,p2) => {
+            if(p1.pinned &&  !p2.pinned)
+                return -1;
+            if(!p1.pinned && p2.pinned)
+                return 1
+            return p2.createdAt - p1.createdAt
+        })
+        return posts;
+    }
+    else
+        return state.posts.value
+};
 
 export const selectPostById = (id) => (state) => {
     // TODO: Complete this - to find a post by its ID
@@ -90,7 +115,7 @@ export const selectPostById = (id) => (state) => {
 }
 
 // These will be used by downstream modules when dispatching actions to the store
-export const { createPost, editPost, deletePost } = postsSlice.actions;
+export const { createPost, editPost, deletePost, pinPost } = postsSlice.actions;
 
 // This is used to configure the root reducer
 export default postsSlice.reducer;

@@ -3,11 +3,11 @@ import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
-import { FilePlus, Pencil, Trash } from 'react-bootstrap-icons';
+import { FilePlus, Pencil, Trash, Pin, PinFill } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatDateTime } from '../../utils';
-import { deletePost, selectAllPosts } from '../../store/posts/reducer';
+import { deletePost, pinPost, selectAllPosts } from '../../store/posts/reducer';
 import './index.css';
 import { useCallback, useState } from 'react';
 
@@ -24,7 +24,7 @@ const PostBody = ({ post }) => (
     </div>
 );
 
-const PostFooter = ({ post, onDelete }) => (
+const PostFooter = ({ post, onDelete, onPin }) => (
     <div className="mt-4 post-footer">
         <div className="post-timestamps">
             Posted on: {formatDateTime(post.createdAt)}
@@ -35,6 +35,7 @@ const PostFooter = ({ post, onDelete }) => (
         <div className="post-footer-spacer"></div>
         <div>
             <Button size="sm" variant='danger' onClick={onDelete}><Trash /></Button>&nbsp;
+            <Button size='sm' variant='info' onClick={onPin}>{post.pinned?<PinFill />:<Pin />}</Button>&nbsp;
             <Link to={`/posts/${post.id}`}><Button size="sm"><Pencil /></Button></Link>
         </div>
     </div>
@@ -61,12 +62,19 @@ const HomePage = () => {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [selectedPostForDelete, setSelectedPostForDelete] = useState({});
 
-    const posts = useSelector(selectAllPosts());
+    const posts = useSelector(selectAllPosts(true));
+
     const dispatch = useDispatch();
 
     const onPostDelete = useCallback((post) => {
         setSelectedPostForDelete(post);
         setShowConfirmDelete(true);
+    }, []);
+
+    const onPostPin = useCallback((post) => {
+        dispatch(pinPost({
+            id: post.id,
+        }))
     }, []);
 
     const onConfirmDeleteModalHide = useCallback(() => {
@@ -96,18 +104,23 @@ const HomePage = () => {
                 </Container>
             </Navbar>
             <Container>
-                {posts.map(post => (
-                    <Card key={post.id} className="mb-2 post-card">
+                {posts.map(post => {
+                    let className = "mb-2 post-card";
+                    if(post.pinned)
+                        className = "mb-2 post-card post-card-pinned"
+                    return (
+                    <Card key={post.id} className={className}>
                         <Card.Body>
                             <PostHeader post={post} />
                             <PostBody post={post} />
                             <PostFooter
                                 post={post}
                                 onDelete={() => onPostDelete(post)}
+                                onPin={() => onPostPin(post)}
                             />
                         </Card.Body>
                     </Card>
-                ))}
+                )})}
             </Container>
 
             <ConfirmDeleteModal
